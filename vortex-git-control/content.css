@@ -1,0 +1,70 @@
+#vortex-git-control-settings {
+  position: fixed;
+  right: 20px;
+  bottom: 20px;
+  z-index: 2147483646;
+  width: 44px;
+  height: 44px;
+  border: 1px solid var(--borderColor-default, #3d444d);
+  border-radius: 50%;
+  background: var(--bgColor-default, #fff);
+  color: var(--fgColor-default, #25292e);
+  box-shadow: 0 2px 10px #0003;
+  font: 26px/1 sans-serif;
+  cursor: pointer;
+}
+
+#vortex-git-control-number-dialog {
+  margin: auto;
+  padding: 24px;
+  width: min(360px, calc(100vw - 32px));
+  border: 1px solid var(--borderColor-default, #3d444d);
+  border-radius: 12px;
+  background: var(--bgColor-default, #fff);
+  color: var(--fgColor-default, #25292e);
+}
+#vortex-git-control-number-dialog::backdrop { background: #0008; }
+#vortex-git-control-number-dialog label { display: block; font-weight: 600; }
+#vortex-git-control-number-dialog input {
+  display: block;
+  width: 100%;
+  margin: 16px 0;
+  padding: 8px;
+  background: inherit;
+  color: inherit;
+  border: 1px solid var(--borderColor-default, #656d76);
+  border-radius: 6px;
+}
+#vortex-git-control-number-dialog button { padding: 6px 12px; margin-right: 8px; cursor: pointer; }
+
+#vortex-git-control-toast {
+  align-items: center;
+  background: var(--bgColor-emphasis, #25292e);
+  border: 1px solid var(--borderColor-default, #3d444d);
+  border-left: 4px solid var(--borderColor-accent-emphasis, #1f6feb);
+  border-radius: 8px;
+  bottom: 24px;
+  box-shadow: 0 8px 28px rgba(0, 0, 0, .32);
+  color: var(--fgColor-onEmphasis, #fff);
+  display: flex;
+  font: 600 13px/1.4 -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  left: 50%;
+  max-width: min(440px, calc(100vw - 32px));
+  min-height: 42px;
+  padding: 10px 14px;
+  position: fixed;
+  transform: translateX(-50%);
+  z-index: 2147483647;
+}
+
+#vortex-git-control-toast[data-kind="error"] { border-left-color: var(--borderColor-danger-emphasis, #da3633); }
+#vortex-git-control-toast[data-kind="neutral"] { border-left-color: var(--borderColor-muted, #656d76); }
+#vortex-git-control-toast[hidden] { display: none; }
+
+@media (prefers-reduced-motion: no-preference) {
+  #vortex-git-control-toast:not([hidden]) { animation: vortex-toast-in 120ms ease-out; }
+  @keyframes vortex-toast-in {
+    from { opacity: 0; transform: translate(-50%, 6px); }
+    to { opacity: 1; transform: translate(-50%, 0); }
+  }
+}

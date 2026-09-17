@@ -1,0 +1,9 @@
+{
+  "name": "vortex-git-control",
+  "version": "1.4.3",
+  "private": true,
+  "description": "Keyboard-driven chronological GitHub issue navigation.",
+  "scripts": {
+    "test": "node --test"
+  }
+}
