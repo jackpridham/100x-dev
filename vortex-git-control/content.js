@@ -227,7 +227,7 @@
       else if (result.mark.status === "no-current-file") showToast("No file is currently in view.", "neutral");
       else if (result.focus && result.focus.status === "success") {
         showToast(result.mark.status === "success"
-          ? "Marked the current file viewed and focused the next unviewed file."
+          ? `${result.mark.path || "Current file"} marked as viewed.`
           : "The current file was already viewed; focused the next unviewed file.", "neutral");
       } else if (result.focus && result.focus.status === "no-next-unviewed") {
         showToast(result.mark.status === "success"
