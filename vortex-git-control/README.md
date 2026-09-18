@@ -45,6 +45,8 @@ On a repository's Issues or Pull requests pages (including individual items and 
 
 ## Configure sequences
 
+Number jumps use GitHub's React/Turbo link navigation when available, avoiding a forced full page reload. The dialog closes as soon as you submit. Normal same-tab navigation is the fallback; GitHub's network and rendering time still affect how quickly the destination appears.
+
 Each action accepts exactly two printable, non-space keys. In the options page you can record a replacement, disable an action, reset one action, or restore every default. Duplicate sequences cannot be saved. Changes propagate to already-open GitHub tabs.
 
 Sequences are deliberately ignored in inputs, textareas, selectors, buttons, contenteditable regions, and textbox widgets. Composition, held-key repeats, and Ctrl/Alt/Command-modified keys are also ignored.

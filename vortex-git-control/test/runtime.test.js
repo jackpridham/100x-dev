@@ -4,6 +4,32 @@ const runtime = require("../src/runtime.js");
 
 const context = { owner: "acme", repo: "widgets" };
 
+test("number jumps activate a connected same-tab link with GitHub navigation hooks", () => {
+  for (const section of ["issues", "pull"]) {
+    let connected = false;
+    let clicked = false;
+    const attributes = {};
+    const link = {
+      setAttribute: (name, value) => { attributes[name] = value; },
+      click: () => { assert.equal(connected, true); clicked = true; },
+      remove: () => { connected = false; }
+    };
+    const document = {
+      createElement: tag => { assert.equal(tag, "a"); return link; },
+      body: { append: node => { assert.equal(node, link); connected = true; } }
+    };
+    const url = `https://github.com/acme/widgets/${section}/999999999`;
+    runtime.navigateNumberedPage(document, url);
+    assert.equal(clicked, true);
+    assert.equal(connected, false);
+    assert.equal(link.href, url);
+    assert.equal(link.target, undefined);
+    assert.equal(attributes["data-turbo"], "true");
+    assert.equal(attributes["data-turbo-frame"], "_top");
+    assert.equal(attributes["data-react-nav"], section === "issues" ? "issues-react" : undefined);
+  }
+});
+
 test("number dialog routes issue and PR lists, detail pages, and review tabs", () => {
   for (const path of ["issues", "issues/12", "issues?q=is%3Aopen"]) {
     assert.equal(runtime.numberedPageBase(`https://github.com/acme/widgets/${path}`), "https://github.com/acme/widgets/issues/");

@@ -73,7 +73,10 @@
     cancel.addEventListener("click", () => dialog.close());
     form.addEventListener("submit", (event) => {
       event.preventDefault();
-      navigate(base + input.value);
+      dialog.close();
+      navigationGate.invalidate();
+      pullRequestNavigationGate.invalidate();
+      runtime.navigateNumberedPage(document, base + input.value);
     });
     dialog.addEventListener("close", () => {
       dialog.remove();

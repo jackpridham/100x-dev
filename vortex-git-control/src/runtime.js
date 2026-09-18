@@ -29,6 +29,25 @@
     return `${url.origin}/${match[1]}/${match[2]}/${match[3] === "issues" ? "issues" : "pull"}/`;
   }
 
+  function navigateNumberedPage(documentObject, url) {
+    // Let GitHub's link handlers use React/Turbo navigation when available.
+    // An ordinary same-tab link remains the browser fallback.
+    const link = documentObject.createElement("a");
+    link.href = url;
+    link.hidden = true;
+    link.setAttribute("data-turbo", "true");
+    link.setAttribute("data-turbo-frame", "_top");
+    if (new URL(url).pathname.split("/")[3] === "issues") {
+      link.setAttribute("data-react-nav", "issues-react");
+    }
+    documentObject.body.append(link);
+    try {
+      link.click();
+    } finally {
+      link.remove();
+    }
+  }
+
   function errorMessage(error) {
     switch (error && error.code) {
       case "NOT_ISSUE": return "This is not an individual issue page.";
@@ -80,5 +99,5 @@
     }
   }
 
-  return Object.freeze({ NavigationGate, errorMessage, numberedPageBase, repositoryActionUrl, wireLifecycle });
+  return Object.freeze({ NavigationGate, errorMessage, navigateNumberedPage, numberedPageBase, repositoryActionUrl, wireLifecycle });
 });
