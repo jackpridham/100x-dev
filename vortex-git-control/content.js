@@ -8,6 +8,8 @@
   const pullRequest = globalThis.VortexGitControlPullRequest;
   let settings = core.defaultSettings();
   let toastTimer = null;
+  let toastHideTimer = null;
+  let navigationTimer = null;
   let markCurrentFileViewedRunning = false;
   let focusNextUnviewedFileRunning = false;
   const navigationGate = new runtime.NavigationGate();
@@ -30,12 +32,24 @@
     toast.dataset.kind = kind;
     toast.textContent = message;
     toast.hidden = false;
+    toast.dataset.visible = "false";
+    void toast.offsetWidth;
+    toast.dataset.visible = "true";
     clearTimeout(toastTimer);
-    toastTimer = setTimeout(() => { toast.hidden = true; }, kind === "loading" ? 10000 : 3200);
+    clearTimeout(toastHideTimer);
+    toastTimer = setTimeout(() => {
+      toast.dataset.visible = "false";
+      toastHideTimer = setTimeout(() => { toast.hidden = true; }, 180);
+    }, kind === "loading" ? 10000 : 3200);
   }
 
-  function navigate(url) {
-    window.location.assign(url);
+  function navigate(url, message = "Opening…", soft = false) {
+    showToast(message, "loading");
+    clearTimeout(navigationTimer);
+    navigationTimer = setTimeout(() => {
+      if (soft) runtime.navigateNumberedPage(document, url);
+      else window.location.assign(url);
+    }, 300);
   }
 
   let numberDialog = null;
@@ -76,7 +90,7 @@
       dialog.close();
       navigationGate.invalidate();
       pullRequestNavigationGate.invalidate();
-      runtime.navigateNumberedPage(document, base + input.value);
+      navigate(base + input.value, `Opening #${input.value}…`, true);
     });
     dialog.addEventListener("close", () => {
       dialog.remove();
@@ -120,14 +134,14 @@
       if (cached && cached.complete && cached.issues.length) {
         const direct = cacheApi.selectCachedIssue(cached.issues, issueContext.number, direction);
         if (direct) {
-          navigate(github.canonicalIssueUrl(issueContext, direct.number));
+          navigate(github.canonicalIssueUrl(issueContext, direct.number), `Opening ${direction} issue…`);
           return;
         }
         const anchor = github.extractCurrentIssue(document, window.location.href);
         const adjacent = github.selectAdjacent(anchor, cached.issues, direction);
         const target = adjacent || (direction === "newer" ? cached.issues[0] : null);
         if (target) {
-          navigate(github.canonicalIssueUrl(issueContext, target.number));
+          navigate(github.canonicalIssueUrl(issueContext, target.number), `Opening ${direction} issue…`);
           return;
         }
         showToast(`No ${direction} open issue.`, "neutral");
@@ -147,14 +161,14 @@
           const firstPage = await github.fetchOpenIssuesPage({ context: issueContext, page: 1, signal: operation.controller.signal });
           if (!navigationGate.isCurrent(operation)) return;
           if (firstPage.issues[0]) {
-            navigate(github.canonicalIssueUrl(issueContext, firstPage.issues[0].number));
+            navigate(github.canonicalIssueUrl(issueContext, firstPage.issues[0].number), "Opening newer issue…");
             return;
           }
         }
         showToast(`No ${direction} open issue.`, "neutral");
         return;
       }
-      navigate(url);
+      navigate(url, `Opening ${direction} issue…`);
     } catch (error) {
       if (!navigationGate.isCurrent(operation)) return;
       showToast(runtime.errorMessage(error), "error");
@@ -170,7 +184,13 @@
       return;
     }
     const url = runtime.repositoryActionUrl(context, action);
-    if (url) navigate(url);
+    if (!url) return;
+    const messages = {
+      openIssues: "Opening issues…",
+      openPullRequests: "Opening pull requests…",
+      newIssue: "Opening a new issue…"
+    };
+    navigate(url, messages[action]);
   }
 
   async function refreshIssueCache() {

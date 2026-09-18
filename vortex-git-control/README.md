@@ -57,6 +57,7 @@ Sequences are deliberately ignored in inputs, textareas, selectors, buttons, con
 - Navigation stops at the oldest/newest open issue and does not wrap.
 - GitHub handles repositories with Issues disabled, archived repositories, missing write access, and template availability after a direct action navigates.
 - A small status toast reports unavailable context, chronological boundaries, network failures, or a GitHub page shape the adapter cannot safely interpret.
+- Every page navigation briefly confirms what is opening in a bottom-center status toast.
 
 After updating the extension files, use the reload button for Vortex Git Control on `chrome://extensions`, then refresh existing GitHub tabs.
 

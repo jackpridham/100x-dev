@@ -51,20 +51,22 @@
   left: 50%;
   max-width: min(440px, calc(100vw - 32px));
   min-height: 42px;
+  opacity: 0;
   padding: 10px 14px;
   position: fixed;
-  transform: translateX(-50%);
+  transform: translate(-50%, 6px);
+  transition: opacity 180ms ease, transform 180ms ease;
   z-index: 2147483647;
 }
 
+#vortex-git-control-toast[data-visible="true"] {
+  opacity: 1;
+  transform: translate(-50%, 0);
+}
 #vortex-git-control-toast[data-kind="error"] { border-left-color: var(--borderColor-danger-emphasis, #da3633); }
 #vortex-git-control-toast[data-kind="neutral"] { border-left-color: var(--borderColor-muted, #656d76); }
 #vortex-git-control-toast[hidden] { display: none; }
 
-@media (prefers-reduced-motion: no-preference) {
-  #vortex-git-control-toast:not([hidden]) { animation: vortex-toast-in 120ms ease-out; }
-  @keyframes vortex-toast-in {
-    from { opacity: 0; transform: translate(-50%, 6px); }
-    to { opacity: 1; transform: translate(-50%, 0); }
-  }
+@media (prefers-reduced-motion: reduce) {
+  #vortex-git-control-toast { transition: none; }
 }
