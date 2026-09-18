@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ThreadCopy</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      width: 320px;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: linear-gradient(180deg, #0f0f1a 0%, #1a1a2e 100%);
+      color: #ffffff;
+      padding: 24px;
+    }
+
+    .header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+
+    .logo {
+      width: 40px;
+      height: 40px;
+      background: #ff2d9b;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .logo svg {
+      width: 24px;
+      height: 24px;
+      stroke: #00ff88;
+      fill: none;
+    }
+
+    .title {
+      font-size: 18px;
+      font-weight: 700;
+      letter-spacing: -0.3px;
+    }
+
+    .subtitle {
+      font-size: 12px;
+      color: #9ca3af;
+      margin-top: 2px;
+    }
+
+    /* Toggle row */
+    .toggle-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px 16px;
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      border-radius: 12px;
+      margin-bottom: 16px;
+    }
+
+    .toggle-label {
+      font-size: 14px;
+      font-weight: 600;
+    }
+
+    .toggle-status {
+      font-size: 11px;
+      color: #9ca3af;
+      margin-top: 2px;
+    }
+
+    .toggle-status.on { color: #00ff88; }
+    .toggle-status.off { color: #6b7280; }
+
+    /* Toggle switch */
+    .toggle {
+      position: relative;
+      width: 44px;
+      height: 24px;
+      flex-shrink: 0;
+    }
+
+    .toggle input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+
+    .toggle-slider {
+      position: absolute;
+      cursor: pointer;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: #374151;
+      border-radius: 24px;
+      transition: 0.2s;
+    }
+
+    .toggle-slider:before {
+      content: "";
+      position: absolute;
+      height: 18px;
+      width: 18px;
+      left: 3px;
+      bottom: 3px;
+      background: white;
+      border-radius: 50%;
+      transition: 0.2s;
+    }
+
+    .toggle input:checked + .toggle-slider {
+      background: #00ff88;
+    }
+
+    .toggle input:checked + .toggle-slider:before {
+      transform: translateX(20px);
+    }
+
+    .section {
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      border-radius: 12px;
+      padding: 16px;
+      margin-bottom: 16px;
+    }
+
+    .section-title {
+      font-size: 11px;
+      font-weight: 600;
+      color: #6b7280;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 12px;
+    }
+
+    .platform {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 8px 0;
+    }
+
+    .platform:not(:last-child) {
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    .platform-icon {
+      width: 28px;
+      height: 28px;
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+    }
+
+    .platform-icon.twitter { background: #1d9bf0; }
+    .platform-icon.linkedin { background: #0a66c2; }
+    .platform-icon.reddit { background: #ff4500; }
+
+    .platform-name {
+      font-size: 13px;
+      font-weight: 500;
+    }
+
+    .platform-desc {
+      font-size: 11px;
+      color: #9ca3af;
+    }
+
+    .instructions {
+      font-size: 12px;
+      color: #9ca3af;
+      line-height: 1.6;
+    }
+
+    .instructions li {
+      margin-bottom: 8px;
+      padding-left: 4px;
+    }
+
+    .highlight {
+      color: #00ff88;
+      font-weight: 500;
+    }
+
+    .footer {
+      text-align: center;
+      font-size: 11px;
+      color: #4b5563;
+      margin-top: 8px;
+    }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <div class="logo">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+        <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+        <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+      </svg>
+    </div>
+    <div>
+      <div class="title">ThreadCopy</div>
+      <div class="subtitle">Copy threads with one click</div>
+    </div>
+  </div>
+
+  <div class="toggle-row">
+    <div>
+      <div class="toggle-label">Extension</div>
+      <div class="toggle-status on" id="toggle-status">Active</div>
+    </div>
+    <label class="toggle">
+      <input type="checkbox" id="toggle-switch" checked>
+      <span class="toggle-slider"></span>
+    </label>
+  </div>
+
+  <div class="section">
+    <div class="section-title">Supported Platforms</div>
+
+    <div class="platform">
+      <div class="platform-icon twitter">&#x1D54F;</div>
+      <div>
+        <div class="platform-name">X (Twitter)</div>
+        <div class="platform-desc">Threads & replies</div>
+      </div>
+    </div>
+
+    <div class="platform">
+      <div class="platform-icon linkedin">in</div>
+      <div>
+        <div class="platform-name">LinkedIn</div>
+        <div class="platform-desc">Posts & comments</div>
+      </div>
+    </div>
+
+    <div class="platform">
+      <div class="platform-icon reddit">r/</div>
+      <div>
+        <div class="platform-name">Reddit</div>
+        <div class="platform-desc">Threads & comments</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">How to Use</div>
+    <ol class="instructions">
+      <li>Navigate to a <span class="highlight">thread or post</span> on any supported platform</li>
+      <li>Look for the <span class="highlight">ThreadCopy button</span> on the right side</li>
+      <li>Click <span class="highlight">"ThreadCopy"</span> to copy everything</li>
+      <li>Paste anywhere - LLMs, notes, docs</li>
+    </ol>
+  </div>
+
+  <div class="footer">
+    v1.0.0 &bull; ThreadCopy
+  </div>
+
+  <script src="popup.js"></script>
+</body>
+</html>
